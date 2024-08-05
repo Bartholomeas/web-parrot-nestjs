@@ -10,6 +10,8 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from 'src/auth/auth.service';
+
+import { AccessTokenDto } from 'src/dto/auth/access-token.do';
 import { CreateUserDto } from 'src/dto/user/create-user.dto';
 import { SignInDto } from 'src/dto/user/sign-in.dto';
 import { UserResponseDto } from 'src/dto/user/user-response.dto';
@@ -18,6 +20,17 @@ import { UserResponseDto } from 'src/dto/user/user-response.dto';
 @ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @HttpCode(HttpStatus.OK)
+  @Post('sign-in')
+  @ApiOperation({ summary: 'Sign in' })
+  @ApiResponse({
+    status: HttpStatus.ACCEPTED,
+    type: [AccessTokenDto],
+  })
+  async signIn(@Body(ValidationPipe) credentials: SignInDto) {
+    return await this.authService.signIn(credentials);
+  }
 
   @Post('create-user')
   @HttpCode(HttpStatus.CREATED)
@@ -34,10 +47,5 @@ export class AuthController {
       id: crypto.randomUUID(),
       email: user.email,
     };
-  }
-
-  @Post('login')
-  login(@Body(ValidationPipe) credentials: SignInDto) {
-    return credentials.email;
   }
 }
