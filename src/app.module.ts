@@ -10,10 +10,10 @@ import { UserService } from './user/user.service';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     CacheModule.register(),
     AuthModule,
     UserModule,
-    ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],
   providers: [AppService, UserService],
