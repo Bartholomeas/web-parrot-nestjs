@@ -1,20 +1,51 @@
-import { Injectable } from '@nestjs/common';
-import { Maybe } from 'src/types/util.types';
+import {
+  ClassSerializerInterceptor,
+  Injectable,
+  UseInterceptors,
+} from '@nestjs/common';
+import { PrismaService } from 'src/lib/prisma/prisma.service';
 
-//TODO: This should be a real class/interface representing a user entity
-export type User = any;
+import { UserEntity } from 'src/user/entity/user.entity';
+
+interface UserCreatePayload {
+  email: string;
+  password: string;
+}
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = [
-    {
-      id: 'a4a937ed-d2a7-4faa-9861-50e401230da1',
-      email: 'mariano@gmail.com',
-      password: '$2b$10$cyVsgk3ogSYHtKVE2YI66.GfusmUd3s2vd2PvP.OJ.q0zTTXNnyU2', //!23Haslo
-    },
-  ];
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findOne(email: string): Promise<Maybe<User>> {
-    return this.users.find((user) => user.email === email) ?? null;
+  async create(payload: UserCreatePayload): Promise<UserEntity> {
+    const user = await this.prisma.user.create({
+      data: {
+        email: payload.email,
+        password: payload.password,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        email: true,
+      },
+    });
+
+    return new UserEntity(user);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  async findOne(email: string): Promise<UserEntity> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+        email: true,
+        createdAt: true,
+        password: true,
+      },
+    });
+
+    return new UserEntity(user);
   }
 }
