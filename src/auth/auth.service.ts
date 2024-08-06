@@ -25,12 +25,6 @@ export class AuthService {
 
   async signIn(input: SignInDto): Promise<AccessTokenDto> {
     const user = await this.validateUser(input);
-    const passwordsMatches = await this.comparePasswords(
-      input.password,
-      user.password,
-    );
-    if (!passwordsMatches) throw new UnauthorizedException();
-
     const accessToken = await this.signAccessToken(user);
     return { accessToken };
   }
@@ -60,7 +54,7 @@ export class AuthService {
   async validateUser(input: SignInDto): Promise<UserEntity> {
     const user = await this.userService.findOne(input.email);
 
-    if (!user) throw new UnauthorizedException();
+    if (!user?.email) throw new UnauthorizedException();
 
     const passwordsMatch = await bcrypt.compare(input.password, user.password);
     if (!passwordsMatch) throw new UnauthorizedException();

@@ -1,9 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   HttpCode,
   HttpStatus,
   Post,
+  Req,
+  Response,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -50,5 +53,14 @@ export class AuthController {
       createdAt: createdUser.createdAt,
       email: createdUser.email,
     };
+  }
+
+  @Delete('logout')
+  @ApiOperation({
+    summary: 'Logout',
+  })
+  async logout(@Response() res: any) {
+    res.clearCookie('connect.sid');
+    return res.status(HttpStatus.NO_CONTENT).send();
   }
 }

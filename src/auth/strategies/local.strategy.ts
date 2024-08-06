@@ -20,7 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     } satisfies SignInDto;
 
     const user = await this.authService.validateUser(payload);
-    if (!user) throw new UnauthorizedException();
+    if (!user?.email) throw new UnauthorizedException();
 
     return user;
   }
