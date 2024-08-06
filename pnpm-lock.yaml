@@ -84,6 +84,9 @@ importers:
       '@types/node':
         specifier: ^20.3.1
         version: 20.14.14
+      '@types/passport':
+        specifier: ^1.0.16
+        version: 1.0.16
       '@types/passport-local':
         specifier: ^1.0.38
         version: 1.0.38

@@ -1,17 +1,18 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   HttpCode,
   HttpStatus,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from 'src/auth/auth.service';
+import { LocalAuthGuard } from 'src/auth/guards/local.auth.guard';
+import { AccessTokenDto } from 'src/dto/auth/access-token.dto';
 
-import { AccessTokenDto } from 'src/dto/auth/access-token.do';
 import { CreateUserDto } from 'src/dto/user/create-user.dto';
 import { SignInDto } from 'src/dto/user/sign-in.dto';
 import { UserResponseDto } from 'src/dto/user/user-response.dto';
@@ -21,6 +22,7 @@ import { UserResponseDto } from 'src/dto/user/user-response.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   @ApiOperation({ summary: 'Sign in' })
@@ -39,13 +41,14 @@ export class AuthController {
     status: HttpStatus.CREATED,
     type: [UserResponseDto],
   })
-  createUser(@Body(ValidationPipe) user: CreateUserDto): UserResponseDto {
-    if (user.password !== user.confirmPassword)
-      throw new BadRequestException('Passwords does not match');
-
+  async createUser(
+    @Body(ValidationPipe) user: CreateUserDto,
+  ): Promise<UserResponseDto> {
+    const createdUser = await this.authService.createUser(user);
     return {
-      id: crypto.randomUUID(),
-      email: user.email,
+      id: createdUser.id,
+      createdAt: createdUser.createdAt,
+      email: createdUser.email,
     };
   }
 }

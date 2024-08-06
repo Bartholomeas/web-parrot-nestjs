@@ -20,7 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "postinstall": "pnpx prisma generate",
     "db:studio": "pnpx prisma studio",
-    "db:push":"pnpx prisma db push"
+    "db:push": "pnpx prisma db push"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.2.2",
@@ -50,6 +50,7 @@
     "@types/express-session": "^1.18.0",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
+    "@types/passport": "^1.0.16",
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
