@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 
 import * as bcrypt from 'bcrypt';
 
@@ -25,7 +26,6 @@ export class AuthService {
     if (!passwordsMatches) throw new UnauthorizedException();
 
     const accessToken = await this.signAccessToken(user);
-
     return { accessToken };
   }
 
@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   // TODO: replace any with User entity from Prisma
-  async validateUser(input: SignInDto): Promise<any> {
+  async validateUser(input: SignInDto): Promise<User> {
     const user = await this.userService.findOne(input.email);
     if (!user) throw new UnauthorizedException();
 

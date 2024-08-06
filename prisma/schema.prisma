@@ -15,7 +15,9 @@ datasource db {
 
 model User {
   id           String        @id @default(uuid())
-  email        String
+  createadAt   DateTime      @default(now())
+  email        String        @unique
+  password     String
   limitedSites LimitedSite[]
 }
 
